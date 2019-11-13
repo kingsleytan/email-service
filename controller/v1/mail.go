@@ -185,6 +185,12 @@ func SendWithTemplate(c echo.Context) error {
 	msg.AddVariable("body", m.TemplateData.Body)
 
 	_, id, err := mg.Send(ctx, msg)
-	fmt.Printf("Queued: %s", id)
-	return err
+	result := fmt.Sprintf("Queued: %s", id)
+	if err != nil {
+		return c.JSON(400, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"result": fmt.Sprintf("result: %s", result),
+	})
 }
