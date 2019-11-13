@@ -3,6 +3,7 @@ package v1
 import (
 	"context"
 	"email-service/config"
+	"email-service/controller/response"
 	"email-service/model"
 	"email-service/package/validator"
 	"fmt"
@@ -13,21 +14,24 @@ import (
 	"github.com/mailgun/mailgun-go/v3"
 )
 
+var i struct {
+	ID           string `json:"id" validate:"required"`
+	To           string `json:"to" validate:"required"`
+	From         string `json:"from"`
+	Domain       string `json:"domain"`
+	Subject      string `json:"subject"`
+	TemplateData struct {
+		Title string `json:"title"`
+		Body  string `json:"body"`
+	} `json:"templateData" validate:"required"`
+	Template    string `json:"template" validate:"required"`
+	ReferenceID string `json:"referenceID"`
+	Status      string `json:"status" validate:"required"`
+	Events      string `json:"events"`
+}
+
 // SendEmail :
 func SendEmail(c echo.Context) error {
-
-	var i struct {
-		ID           string `json:"id" validate:"required"`
-		To           string `json:"to" validate:"required"`
-		From         string `json:"from"`
-		Domain       string `json:"domain"`
-		Subject      string `json:"subject"`
-		TemplateData string `json:"templateData" validate:"required"`
-		Template     string `json:"template" validate:"required"`
-		ReferenceID  string `json:"referenceID"`
-		Status       string `json:"status" validate:"required"`
-		Events       string `json:"events"`
-	}
 
 	// bind input
 	if err := c.Bind(&i); err != nil {
@@ -70,8 +74,18 @@ func SendEmail(c echo.Context) error {
 
 	fmt.Printf("ID: %s Resp: %s\n", id, resp)
 
-	return c.JSON(http.StatusOK, map[string]string{
-		"message": fmt.Sprintf("Test success: %s", i),
+	r := response.Mail{}
+	r.To = m.To
+	r.From = m.From
+	r.Domain = m.Domain
+	r.TemplateData.Title = m.TemplateData.Title
+	r.TemplateData.Body = m.TemplateData.Body
+	r.Template = m.Template
+	r.ReferenceID = m.ReferenceID
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"item":   r,
+		"result": fmt.Sprintf("result: %s", resp),
 	})
 }
 
@@ -124,23 +138,6 @@ func ListTemplateVersions(c echo.Context) error {
 
 // SendWithTemplate :
 func SendWithTemplate(c echo.Context) error {
-
-	var i struct {
-		ID           string `json:"id" validate:"required"`
-		To           string `json:"to" validate:"required"`
-		From         string `json:"from"`
-		Domain       string `json:"domain"`
-		Subject      string `json:"subject"`
-		TemplateData struct {
-			Title string `json:"title"`
-			Body  string `json:"body"`
-		} `json:"templateData" validate:"required"`
-		Template    string `json:"template" validate:"required"`
-		ReferenceID string `json:"referenceID"`
-		Status      string `json:"status" validate:"required"`
-		Events      string `json:"events"`
-	}
-
 	// bind input
 	if err := c.Bind(&i); err != nil {
 		return err
@@ -190,7 +187,17 @@ func SendWithTemplate(c echo.Context) error {
 		return c.JSON(400, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, map[string]string{
+	r := response.Mail{}
+	r.To = m.To
+	r.From = m.From
+	r.Domain = m.Domain
+	r.TemplateData.Title = m.TemplateData.Title
+	r.TemplateData.Body = m.TemplateData.Body
+	r.Template = m.Template
+	r.ReferenceID = m.ReferenceID
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"item":   r,
 		"result": fmt.Sprintf("result: %s", result),
 	})
 }
