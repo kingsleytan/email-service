@@ -1,0 +1,31 @@
+settings:
+  files:
+    outputs:
+      status: false
+      path: ''
+      name: storage/log/server.log
+  legacy:
+    force: true
+    interval: 0ms
+schema:
+  - name: EMAIL SERVICE
+    path: .
+    env:
+      SYSTEM_PATH: 'http://localhost:2000'
+      ENV: 'development'
+      DOMAIN: 'sandboxe9bba7bf82bd485bac6e8927ef67dcf8.mailgun.org'
+      MAILGUN_KEY: '5b9d832ef593848d99fa538da62b7d1b-1df6ec32-acd23f8d'
+    commands:
+      install:
+        status: true
+        method: go install
+      run:
+        status: true
+    watcher:
+      extensions:
+        - go
+      paths:
+        - /
+      ignored_paths:
+        - .git
+        - .realize
