@@ -63,7 +63,7 @@ func main() {
 	apiVersion1.POST("/send", v1.SendEmail)
 	apiVersion1.POST("/send/:name", v1.SendWithTemplate)
 	apiVersion1.GET("/templates", v1.ListTemplates)
-	apiVersion1.GET("/template/version/:name", v1.ListTemplateVersions)
+	apiVersion1.GET("/template/:name/version", v1.ListTemplateVersions)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":2000"))
