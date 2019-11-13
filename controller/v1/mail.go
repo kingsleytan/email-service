@@ -46,7 +46,7 @@ func SendEmail(c echo.Context) error {
 	m.From = i.From
 	m.Subject = i.Subject
 	m.Domain = i.Domain
-	m.TemplateData = i.TemplateData
+
 	m.Template = i.Template
 	m.ReferenceID = i.ReferenceID
 	m.Status = i.Status
@@ -56,7 +56,7 @@ func SendEmail(c echo.Context) error {
 
 	sender := m.From
 	subject := m.Subject
-	body := m.TemplateData
+	body := ""
 	recipient := m.To
 	message := mg.NewMessage(sender, subject, body, recipient)
 
@@ -131,11 +131,14 @@ func SendWithTemplate(c echo.Context) error {
 		From         string `json:"from"`
 		Domain       string `json:"domain"`
 		Subject      string `json:"subject"`
-		TemplateData string `json:"templateData" validate:"required"`
-		Template     string `json:"template" validate:"required"`
-		ReferenceID  string `json:"referenceID"`
-		Status       string `json:"status" validate:"required"`
-		Events       string `json:"events"`
+		TemplateData struct {
+			Title string `json:"title"`
+			Body  string `json:"body"`
+		} `json:"templateData" validate:"required"`
+		Template    string `json:"template" validate:"required"`
+		ReferenceID string `json:"referenceID"`
+		Status      string `json:"status" validate:"required"`
+		Events      string `json:"events"`
 	}
 
 	// bind input
@@ -155,13 +158,14 @@ func SendWithTemplate(c echo.Context) error {
 	m.From = i.From
 	m.Subject = i.Subject
 	m.Domain = i.Domain
-	m.TemplateData = i.TemplateData
+	m.TemplateData.Title = i.TemplateData.Title
+	m.TemplateData.Body = i.TemplateData.Body
 	m.Template = i.Template
 	m.ReferenceID = i.ReferenceID
 	m.Status = i.Status
 	m.Events = i.Events
 
-	templateName := c.Param("name")
+	templateName := m.Template
 	mg := mailgun.NewMailgun(config.MailgunDomain, config.MailgunKey)
 
 	var err error
@@ -170,15 +174,15 @@ func SendWithTemplate(c echo.Context) error {
 	defer cancel()
 
 	// Create a new message with template
-	msg := mg.NewMessage("Excited User <excited@example.com>", "Template example", "")
+	msg := mg.NewMessage(m.From, m.Subject, "")
 	msg.SetTemplate(templateName)
 
 	// Add recipients
 	msg.AddRecipient(m.To)
 
 	// Add the variables to be used by the template
-	msg.AddVariable("title", "Hello Templates")
-	msg.AddVariable("body", "Body of the message")
+	msg.AddVariable("title", m.TemplateData.Title)
+	msg.AddVariable("body", m.TemplateData.Body)
 
 	_, id, err := mg.Send(ctx, msg)
 	fmt.Printf("Queued: %s", id)
