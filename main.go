@@ -11,8 +11,13 @@ import (
 
 	v1 "email-service/controller/v1"
 
+	// "github.com/go-pg/pg/v9"
+	// "github.com/go-pg/pg/v9/orm"
+
 	"github.com/go-pg/pg/v9"
 	"github.com/go-pg/pg/v9/orm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -62,6 +67,7 @@ func main() {
 	apiVersion1.POST("/send", v1.SendWithTemplate)
 	apiVersion1.GET("/templates", v1.ListTemplates)
 	apiVersion1.GET("/template/:name/version", v1.ListTemplateVersions)
+	apiVersion1.POST("/template/version", v1.UpdateTemplateVersion)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":2000"))
