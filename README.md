@@ -53,6 +53,6 @@
 | reference_id     | string | Optional unique id for identifying request | No | "ref-123" |
 | created     | string | ISO 8601 formatted datetime | "2019-11-14T15:16:16+07:00" |
 | updated     | string | ISO 8601 formatted datetime | "2019-11-14T15:16:16+07:00" |
-| result     | string | Response from Mailgun | "result: Queued: <20191114081611.1.0ADEBFCF1C482B3F@sandbox101d0e758c944cbab2c6628d20462220.mailgun.org>" |
+| result     | string | Response from Mailgun | "result: Queued: <id .mailgun.org>" |
 
 
