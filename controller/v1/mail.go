@@ -30,65 +30,6 @@ var i struct {
 	Events      string `json:"events"`
 }
 
-// SendEmail :
-func SendEmail(c echo.Context) error {
-
-	// bind input
-	if err := c.Bind(&i); err != nil {
-		return err
-	}
-
-	fmt.Println("i", i)
-	// validation checking
-	if _, err := validator.Validate(&i); err != nil {
-		return err
-	}
-
-	m := model.Mail{}
-	m.ID = i.ID
-	m.To = i.To
-	m.From = i.From
-	m.Subject = i.Subject
-	m.Domain = i.Domain
-
-	m.Template = i.Template
-	m.ReferenceID = i.ReferenceID
-	m.Status = i.Status
-	m.Events = i.Events
-
-	mg := mailgun.NewMailgun(config.MailgunDomain, config.MailgunKey)
-
-	sender := m.From
-	subject := m.Subject
-	body := ""
-	recipient := m.To
-	message := mg.NewMessage(sender, subject, body, recipient)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-	defer cancel()
-	resp, id, err := mg.Send(ctx, message)
-
-	if err != nil {
-		return c.JSON(400, err.Error())
-	}
-
-	fmt.Printf("ID: %s Resp: %s\n", id, resp)
-
-	r := response.Mail{}
-	r.To = m.To
-	r.From = m.From
-	r.Domain = m.Domain
-	r.TemplateData.Title = m.TemplateData.Title
-	r.TemplateData.Body = m.TemplateData.Body
-	r.Template = m.Template
-	r.ReferenceID = m.ReferenceID
-
-	return c.JSON(http.StatusOK, map[string]interface{}{
-		"item":   r,
-		"result": fmt.Sprintf("result: %s", resp),
-	})
-}
-
 // ListTemplates :
 func ListTemplates(c echo.Context) error {
 	mg := mailgun.NewMailgun(config.MailgunDomain, config.MailgunKey)
@@ -136,6 +77,45 @@ func ListTemplateVersions(c echo.Context) error {
 	})
 }
 
+var j struct {
+	Template string `json:"template" validate:"required"`
+	Version  string `json:"version" validate:"required"`
+	Active   bool   `json:"active" validate:"required"`
+	Comment  string `json:"comment"`
+}
+
+// UpdateTemplateVersion :
+func UpdateTemplateVersion(c echo.Context) error {
+
+	// bind input
+	if err := c.Bind(&j); err != nil {
+		return err
+	}
+
+	// validation checking
+	if _, err := validator.Validate(&j); err != nil {
+		return err
+	}
+
+	mg := mailgun.NewMailgun(config.MailgunDomain, config.MailgunKey)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
+
+	err := mg.UpdateTemplateVersion(ctx, j.Template, &mailgun.TemplateVersion{
+		Comment: j.Comment,
+		Tag:     j.Version,
+		Active:  j.Active,
+	})
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"result": fmt.Sprintf("result: Successfully updated template (%s), version (%s), active (%s)", j.Template, j.Version, j.Active),
+	})
+}
+
 // SendWithTemplate :
 func SendWithTemplate(c echo.Context) error {
 	// bind input
@@ -143,7 +123,6 @@ func SendWithTemplate(c echo.Context) error {
 		return err
 	}
 
-	fmt.Println("i", i)
 	// validation checking
 	if _, err := validator.Validate(&i); err != nil {
 		return err
