@@ -73,7 +73,7 @@
 }
 ```
 
-### List All Templates
+### List All Template Versions
 - `GET /template/:template-name/version`
 - This is to view all versions of specific template stored in Mailgun.
 - Request:
@@ -90,5 +90,25 @@ Specify template in `:template-name`
 ```
 {
     "result": "result: [{initial  handlebars Wed, 13 Nov 2019 13:52:07 UTC  %!s(bool=true)} {v1  handlebars Thu, 14 Nov 2019 06:58:09 UTC  %!s(bool=false)}]"
+}
+```
+
+### Update Template Version
+- `POST /template/version`
+- This is to update the version of a specific template stored in Mailgun.
+- Request:
+
+| Parameter        | Type           | Description  |  Required | Example |
+| ------------- |:-------------:| -----:| -----:| -----:|
+| template     | string | Template name | Yes | "forgotpassword-2019-11-13.135207" |
+| version     | string | Version to be updated | Yes | "v1" |
+| active     | string | Set this to be the active template | Yes | true |
+| comment     | bool | Comment for this update | No | "This is great template!" |
+
+- Example Response:
+
+```
+{
+    "result": "result: Successfully updated template (forgotpassword-2019-11-13.135207), version (v1), active (%!s(bool=true))"
 }
 ```
