@@ -56,4 +56,39 @@
 | updated     | string | ISO 8601 formatted datetime | "2019-11-14T15:16:16+07:00" |
 | result     | string | Response from Mailgun | "result: Queued: <id .mailgun.org>" |
 
+### List All Templates
+- `GET /templates`
+- This is to view all templates stored in Mailgun.
+- Response:
 
+| Parameter        | Type           | Description  | Example |
+| ------------- |:-------------:| -----:| -----:|
+| result     | []string | Templates stored in Mailgun  | (see below) |
+
+- Example Response:
+
+```
+{
+    "result": "result: [{forgotpassword-2019-11-13.135207  Wed, 13 Nov 2019 13:52:07 UTC {   Mon, 01 Jan 0001 00:00:00 UTC  %!s(bool=false)}}]"
+}
+```
+
+### List All Templates
+- `GET /template/:template-name/version`
+- This is to view all versions of specific template stored in Mailgun.
+- Request:
+Specify template in `:template-name`
+
+- Response:
+
+| Parameter        | Type           | Description  | Example |
+| ------------- |:-------------:| -----:| -----:|
+| result     | []string | Versions of specific template  | (see below) |
+
+- Example Response:
+
+```
+{
+    "result": "result: [{initial  handlebars Wed, 13 Nov 2019 13:52:07 UTC  %!s(bool=true)} {v1  handlebars Thu, 14 Nov 2019 06:58:09 UTC  %!s(bool=false)}]"
+}
+```
