@@ -195,6 +195,8 @@ func SendWithTemplate(c echo.Context) error {
 	r.TemplateData.Body = m.TemplateData.Body
 	r.Template = m.Template
 	r.ReferenceID = m.ReferenceID
+	r.CreatedDateTime = time.Now().Format(time.RFC3339)
+	r.UpdatedDateTime = time.Now().Format(time.RFC3339)
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"item":   r,

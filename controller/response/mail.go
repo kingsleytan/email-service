@@ -9,6 +9,8 @@ type Mail struct {
 		Title string `json:"title"`
 		Body  string `json:"body"`
 	} `json:"templateData" validate:"required"`
-	Template    string `json:"template"`
-	ReferenceID string `json:"referenceID"`
+	Template        string `json:"template"`
+	ReferenceID     string `json:"referenceID"`
+	CreatedDateTime string `json:"created"`
+	UpdatedDateTime string `json:"updated"`
 }

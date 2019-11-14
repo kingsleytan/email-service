@@ -58,8 +58,8 @@ func main() {
 	apiVersion1 := e.Group("/v1")
 	// Routes
 	apiVersion1.GET("", HealthCheck)
-	apiVersion1.POST("/send", v1.SendEmail)
-	apiVersion1.POST("/send/:name", v1.SendWithTemplate)
+	// apiVersion1.POST("/send", v1.SendEmail)
+	apiVersion1.POST("/send", v1.SendWithTemplate)
 	apiVersion1.GET("/templates", v1.ListTemplates)
 	apiVersion1.GET("/template/:name/version", v1.ListTemplateVersions)
 
