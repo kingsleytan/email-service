@@ -3,11 +3,6 @@
 ## To setup DB with Docker
 - run command $`docker-compose up`
 
-## Database Dependencies
-go get -u cloud.google.com/go/datastore
-go get -u github.com/go-sql-driver/mysql
-go get -u github.com/si3nloong/goloquent
-
 ## Setup environment file
 - Go to `.realize-example-yaml` file
 - Change file name into `.realize.yaml`
@@ -18,4 +13,5 @@ go get -u github.com/si3nloong/goloquent
 ## POSTMAN
 - Documenter: [https://www.getpostman.com/collections/88c9e20f6baed6d70244](https://www.getpostman.com/collections/88c9e20f6baed6d70244)
 
-
+## API
+- BaseURL: localhost:2000/v1
