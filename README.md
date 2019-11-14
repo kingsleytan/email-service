@@ -15,3 +15,15 @@
 
 ## API
 - BaseURL: localhost:2000/v1
+### Healthcheck
+- `GET /`
+- This is to check that API is working fine.
+- Response:
+```
+{
+    "message": "API is working fine, ENV: development"
+}
+```
+
+### Healthcheck
+- `GET /`
