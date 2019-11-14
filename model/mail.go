@@ -11,9 +11,10 @@ type Mail struct {
 		Title string `json:"title"`
 		Body  string `json:"body"`
 	} `json:"templateData" validate:"required"`
-	Template    string `json:"template"`
-	ReferenceID string `json:"referenceID"`
-	Status      string `json:"status"`
-	Events      string `json:"events"`
+	Template       string `json:"template"`
+	ReferenceID    string `json:"referenceID"`
+	Status         string `json:"status"`
+	Events         string `json:"events"`
+	ApprovalStatus bool   `json:"approvalStatus"`
 	Model
 }
