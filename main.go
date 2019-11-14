@@ -1,58 +1,56 @@
 package main
 
 import (
+	// "database/sql"
+
 	"email-service/config"
+	"email-service/model"
 	"fmt"
 	"log"
 	"net/http"
 
 	v1 "email-service/controller/v1"
 
+	"github.com/go-pg/pg/v9"
+	"github.com/go-pg/pg/v9/orm"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
+func createSchema(db *pg.DB) error {
+	for _, model := range []interface{}{(*model.Mail)(nil)} {
+		err := db.CreateTable(model, &orm.CreateTableOptions{
+			Temp: true,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// CreateRecord :
+func CreateRecord(db *pg.DB, i interface{}) error {
+	err := db.Insert(i)
+	if err != nil {
+		panic(err)
+	}
+	return err
+}
+
 func main() {
-	// conn, err := amqp.Dial("amqp://setucdwc:8HPqKaOisQhptp7HARM0S1rUaQeAw2LU@cougar.rmq.cloudamqp.com/setucdwc")
-	// failOnError(err, "Failed to connect to RabbitMQ")
-	// defer conn.Close()
 
-	// ch, err := conn.Channel()
-	// failOnError(err, "Failed to open a channel")
-	// defer ch.Close()
+	db := pg.Connect(&pg.Options{
+		User: config.DBUserName,
+	})
+	fmt.Println("db:", db)
+	defer db.Close()
 
-	// q, err := ch.QueueDeclare(
-	// 	"forgot-password-email", // name
-	// 	true,                    // durable
-	// 	false,                   // delete when unused
-	// 	false,                   // exclusive
-	// 	false,                   // no-wait
-	// 	nil,                     // arguments
-	// )
-	// failOnError(err, "Failed to declare a queue")
-
-	// msgs, err := ch.Consume(
-	// 	q.Name, // queue
-	// 	"",     // consumer
-	// 	true,   // auto-ack
-	// 	false,  // exclusive
-	// 	false,  // no-local
-	// 	false,  // no-wait
-	// 	nil,    // args
-	// )
-	// failOnError(err, "Failed to register a consumer")
-
-	// forever := make(chan bool)
-
-	// go func() {
-	// 	for d := range msgs {
-	// 		log.Printf("Received a message: %s", d.Body)
-	// 	}
-	// }()
-
-	// log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	// <-forever
+	err := createSchema(db)
+	if err != nil {
+		panic(err)
+	}
 
 	e := echo.New()
 	e.Use(middleware.Logger())
